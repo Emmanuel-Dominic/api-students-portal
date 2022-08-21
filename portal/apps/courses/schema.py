@@ -1,6 +1,7 @@
 import graphene
-from .types import Course
+from .types import Course, ObjectField
 from .models import Course as CourseModel
+from django.db import IntegrityError
 
 
 class Query(graphene.ObjectType):
@@ -13,3 +14,27 @@ class Query(graphene.ObjectType):
     def resolve_course(self, info, course_id):
         return CourseModel.objects.get(pk=course_id)
 
+
+class CreateCourseMutation(graphene.Mutation):
+    course = graphene.Field(Course)
+    message = ObjectField()
+    status = graphene.Int()
+
+    class Arguments:
+        name = graphene.String(required=True)
+        description = graphene.String(required=True)
+
+    @classmethod
+    def mutate(cls, root, info, name, description):
+        try:
+            course = CourseModel(name=name, description=description)
+            course.save()
+            msg = 'success'
+        except IntegrityError:
+            course = None
+            msg = 'name already in use'
+        return cls(course=course, message=msg, status=200)
+
+
+class Mutation(graphene.ObjectType):
+    create_course = CreateCourseMutation.Field()
