@@ -36,5 +36,33 @@ class CreateCourseMutation(graphene.Mutation):
         return cls(course=course, message=msg, status=200)
 
 
+class EditCourseMutation(graphene.Mutation):
+    course = graphene.Field(Course)
+    message = ObjectField()
+    status = graphene.Int()
+
+    class Arguments:
+        # The input arguments for this mutation
+        pk = graphene.ID(required=True)
+        name = graphene.String()
+        description = graphene.String()
+
+    def mutate(self, info, pk, name, description):
+        course = None
+        try:
+            course = CourseModel.objects.get(pk=pk)
+            course.name = name
+            course.description = description
+            course.save()
+            # Notice we return an instance of this mutation
+            msg = 'success'
+        except CourseModel.DoesNotExist:
+            msg = 'Course not found'
+        except IntegrityError:
+            msg = 'Course name already in use'
+        return EditCourseMutation(course=course, message=msg, status=200)
+
+
 class Mutation(graphene.ObjectType):
     create_course = CreateCourseMutation.Field()
+    update_course = EditCourseMutation.Field()
