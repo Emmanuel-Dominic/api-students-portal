@@ -1,7 +1,10 @@
 import graphene
 from .types import User, Student
+from portal.apps.courses.types import ObjectField
+from portal.apps.courses.models import Course as CourseModel
 from .models import Student as StudentModel
 from django.contrib.auth.models import User as UserModel
+from django.db import IntegrityError
 
 
 class Query(graphene.ObjectType):
@@ -34,3 +37,38 @@ class Query(graphene.ObjectType):
             return StudentModel.objects.get(email=email)
         except StudentModel.DoesNotExist:
             return None
+
+
+class CreateStudentMutation(graphene.Mutation):
+    student = graphene.Field(Student)
+    message = ObjectField()
+    status = graphene.Int()
+
+    class Arguments:
+        username = graphene.String(required=True)
+        email = graphene.String(required=True)
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+        gender = graphene.String(required=True)
+        password = graphene.String(required=True)
+        course_id = graphene.Int(required=True)
+        is_active = graphene.String()
+
+    @classmethod
+    def mutate(cls, root, info, username, email, first_name, last_name, gender, password, course_id, is_active):
+        try:
+            student = StudentModel(
+                username=username, email=email, first_name=first_name, last_name=last_name, gender=gender,
+                is_active=is_active, password=password)
+            course = CourseModel.objects.get(id=course_id)
+            student.course = course
+            student.save()
+            msg = 'success'
+        except IntegrityError as e:
+            student = None
+            msg = 'username or email already in use'
+        return cls(student=student, message=msg, status=200)
+
+
+class Mutation(graphene.ObjectType):
+    create_student = CreateStudentMutation.Field()
