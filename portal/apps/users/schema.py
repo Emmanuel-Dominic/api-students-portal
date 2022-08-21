@@ -70,5 +70,46 @@ class CreateStudentMutation(graphene.Mutation):
         return cls(student=student, message=msg, status=200)
 
 
+class EditStudentMutation(graphene.Mutation):
+    student = graphene.Field(Student)
+    message = ObjectField()
+    status = graphene.Int()
+
+    class Arguments:
+        # The input arguments for this mutation
+        pk = graphene.ID(required=True)
+        username = graphene.String()
+        email = graphene.String()
+        first_name = graphene.String()
+        last_name = graphene.String()
+        course_id = graphene.Int()
+        gender = graphene.String()
+        is_active = graphene.String()
+
+    def mutate(self, info, pk, username, email, first_name, last_name, gender, course_id, is_active):
+        student = None
+        try:
+            course = CourseModel.objects.get(pk=course_id)
+            student = StudentModel.objects.get(pk=pk)
+            student.username = username
+            student.email = email
+            student.first_name = first_name
+            student.last_name = last_name
+            student.gender = gender
+            student.course_id = course
+            student.is_active = is_active
+            student.save()
+            # Notice we return an instance of this mutation
+            msg = 'success'
+        except StudentModel.DoesNotExist:
+            msg = 'Student not found'
+        except CourseModel.DoesNotExist:
+            msg = 'Course not found'
+        except IntegrityError:
+            msg = 'username or email already in use'
+        return EditStudentMutation(student=student, message=msg, status=200)
+
+
 class Mutation(graphene.ObjectType):
     create_student = CreateStudentMutation.Field()
+    update_student = EditStudentMutation.Field()
