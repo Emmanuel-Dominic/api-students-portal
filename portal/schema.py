@@ -1,8 +1,9 @@
 import graphene
+from portal.apps.users import schema as user_schema
 from portal.apps.courses import schema as course_schema
 
 
-class Query(course_schema.Query, graphene.ObjectType):
+class Query(user_schema.Query, course_schema.Query, graphene.ObjectType):
     pass
 
 
