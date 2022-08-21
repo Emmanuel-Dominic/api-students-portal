@@ -110,6 +110,25 @@ class EditStudentMutation(graphene.Mutation):
         return EditStudentMutation(student=student, message=msg, status=200)
 
 
+class DeleteStudentMutation(graphene.Mutation):
+    message = ObjectField()
+    status = graphene.Int()
+
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+    @classmethod
+    def mutate(cls, root, info, pk, **kwargs):
+        try:
+            c = StudentModel.objects.get(pk=pk)
+            c.delete()
+            msg = 'success'
+        except StudentModel.DoesNotExist:
+            msg = 'student not found'
+        return cls(message=msg, status=200)
+
+
 class Mutation(graphene.ObjectType):
     create_student = CreateStudentMutation.Field()
     update_student = EditStudentMutation.Field()
+    delete_student = DeleteStudentMutation.Field()
