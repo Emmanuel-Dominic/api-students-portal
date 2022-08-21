@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graphene_django',
+    'rest_framework',
     'portal.apps.users.apps.UsersConfig',
     'portal.apps.courses.apps.CoursesConfig',
 ]
