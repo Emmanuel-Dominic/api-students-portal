@@ -63,6 +63,26 @@ class EditCourseMutation(graphene.Mutation):
         return EditCourseMutation(course=course, message=msg, status=200)
 
 
+class DeleteCourseMutation(graphene.Mutation):
+    message = ObjectField()
+    status = graphene.Int()
+
+    class Arguments:
+        pk = graphene.ID(required=True)
+
+    @classmethod
+    def mutate(cls, root, info, pk, **kwargs):
+        try:
+            c = CourseModel.objects.get(pk=pk)
+            c.delete()
+            msg = 'success'
+        except CourseModel.DoesNotExist:
+            c = None
+            msg = 'Course not found'
+        return cls(message=msg, status=200)
+
+
 class Mutation(graphene.ObjectType):
     create_course = CreateCourseMutation.Field()
     update_course = EditCourseMutation.Field()
+    delete_course = DeleteCourseMutation.Field()
