@@ -1,6 +1,30 @@
 # API-students-portal
 A student portal project that acts as an online portal between students and the admin built using GraphQL with Django.
 
+## Project Setup
+
+- ### Setup virtual-environment
+```
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+- ### Run Project
+```
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+```
+
+- ### Run Tests
+ - [x] unittests & snapshots
+    - ```coverage run --source='.' manage.py test```
+    ![Screenshot from 2022-08-22 19-59-39](https://user-images.githubusercontent.com/50827537/185996421-f0fd563c-d969-4a86-8fe5-383048cf3fc3.png)
+
+ - [x] pytest
+    - ```pytest```
+    ![Screenshot from 2022-08-22 21-46-31](https://user-images.githubusercontent.com/50827537/185996445-5241ef29-39d8-4943-bcb9-80138f459e78.png)
 
 ### GraphQL Query
 
