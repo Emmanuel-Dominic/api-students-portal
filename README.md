@@ -18,26 +18,44 @@ query {
 }
 ```
 
+- #### Get a single user
+```
+query user($pk: Int!) {
+    user(pk: $pk) {
+        id
+        email
+        username
+        isActive
+        isSuperuser
+        dateJoined
+    }
+}
+
+variables = {"courseId": 1}
+```
+
 - #### Get all courses
 ```
 query {
-  courses {
-    id
-    name
-    description
-  }
+    courses {
+        id
+        name
+        description
+    }
 }
 ```
 
 - #### Get a single course
 ```
-query {
-  course(courseId: 1) {
-    id
-    name
-    description
-  }
+query course($courseId: ID!) {
+    course(courseId: $courseId) {
+        id
+        name
+        description
+    }
 }
+
+variables = {"courseId": 1}
 ```
 
 - #### Get all students
@@ -59,40 +77,46 @@ query {
 
 - #### Get a single student
 ```
-query {
-  student(studentId:1) {
-    id
-    email
-    username
-    isActive
-    course {
-      id
-      name
-      description
+query student($studentId: ID!) {
+    student(studentId:$studentId) {
+        id
+        email
+        username
+        isActive
+        course {
+            id
+            name
+            description
+        }
     }
-  }
 }
+
+variables = {"studentId": 1}
 ```
 
 ### GraphQL Mutation
 
 - #### Create new course
 ```
-mutation {
-    createCourse(name:"Bachelor of Science in Water Resources Engineering", description:"The water resources engineering curriculum is designed to prepare interested students for future careers in water supply, waste water, floodplain, storm water.") {
+mutation createCourse($name: String!, $description: String!) {
+    createCourse(name: $name, description: $description) {
         course {
-          id 
-          name
-          description
+            id 
+            name
+            description
         }
     }
 }
+
+variables = {name:"course name", description:"course description"}
 ```
 
 - #### Create new student
 ```
-mutation {
-    createStudent(username:"tomas", email:"tomas@gmail.com", firstName:"dollar", lastName:"tomas", gender:"female", password:"tomas123", courseId:1, isActive: "t") {
+mutation createStudent($username: String!, $email: String!, $firstName: String!, $lastName: String!, $gender: String!, 
+$password: String!, courseId: Int!, isActive: String!) {
+    createStudent(username: $username, email: $email, firstName: $firstName, lastName: $lastName, gender: $gender, 
+    password: $password, courseId: $courseId, isActive: $isActive) {
         student {
              id 
              username
@@ -110,12 +134,16 @@ mutation {
         }
     }
 }
+
+variables = {
+    username:"tomas", email:"tomas@gmail.com", firstName:"dollar", lastName:"tomas", gender:"female", 
+    password:"tomas123", courseId:1, isActive: "t"}
 ```
 
 - #### Update course by id
 ```
-mutation {
-    updateCourse(pk:2, name:"Bachelor of Computer Engineering", description:"computer Engineering prepares the graduate for developing and using technologies, as well as being able to design, produce, and manage data elaboration systems in a wide range of applications.") {
+mutation updateCourse($pk: ID!, $name: String, $description: String) {
+    updateCourse(pk: $pk, name: $name, description: $description) {
         course {
             id 
             name
@@ -123,39 +151,57 @@ mutation {
         }
     }
 }
+
+variables = {pk:2, name: "updated name", description: "updated description"}
 ```
 
 - #### Update student by id
 ```
-mutation {
-    updateStudent(pk:2, username:"Dominic", email:"ematembu2@gmail.com", firstName: "Manuel", lastName: "Dominic", courseId: 1, gender: "male", isActive: "t") {
+mutation updateStudent($pk: ID!, $username: String, $email: String, $firstName: String, $lastName: String, 
+$gender: String, $password: String, courseId: Int, isActive: String) {
+    updateStudent(pk: $pk, username: $username, email: $email, firstName: $firstName, lastName: $lastName, gender: $gender, 
+    password: $password, courseId: $courseId, isActive: $isActive) {
         student {
-            id 
-            username
-            email
-            firstName
-            lastName
-            gender
-            isActive
+             id 
+             username
+             email
+             firstName
+             lastName
+             gender
+             password
+             isActive
+             course { 
+                id 
+                name 
+                description
+             }
         }
     }
 }
+
+variables = {
+    pk:1, username:"manuel", email:"manuel@gmail.com", firstName:"dollar", lastName:"dominic", gender:"male", 
+    password:"Password123", courseId:1, isActive: "t"}
 ```
 
 - #### Delete course by id
 ```
-mutation {
-    deleteCourse(pk:4) {
+mutation deleteCourse($pk: ID!) {
+    deleteCourse(pk: $pk) {
         message 
     }
 }
+
+variables = {"pk": 1}
 ```
 
 - #### Delete student by id
 ```
-mutation {
-    deleteStudent(pk:3) {
+mutation ($pk: ID!) {
+    deleteStudent(pk: $pk) {
         message 
     }
 }
+
+variables = {"pk": 1}
 ```
