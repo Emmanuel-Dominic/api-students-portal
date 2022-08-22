@@ -65,6 +65,8 @@ GRAPHENE = {
     'ATOMIC_MUTATIONS': True
 }
 
+TEST_RUNNER = 'snapshottest.django.TestRunner'
+
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
