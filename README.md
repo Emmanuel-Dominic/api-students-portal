@@ -44,8 +44,8 @@ query {
 
 - #### Get a single user
 ```
-query user($pk: Int!) {
-    user(pk: $pk) {
+query user($userId: ID!) {
+    user(userId: $userId) {
         id
         email
         username
@@ -55,7 +55,7 @@ query user($pk: Int!) {
     }
 }
 
-variables = {"courseId": 1}
+variables = {"userId": 1}
 ```
 
 - #### Get all courses
